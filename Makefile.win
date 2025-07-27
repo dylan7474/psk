@@ -1,0 +1,34 @@
+# Makefile for C/SDL2 projects cross-compiled for Windows
+#
+# This version includes all necessary libraries for the final Audio Lab,
+# including SDL2, SDL2_mixer, SDL2_ttf, and the required RPC runtime library.
+
+# The cross-compiler for 64-bit Windows.
+CC = x86_64-w64-mingw32-gcc
+
+# The name of the final Windows executable.
+TARGET = psk.exe
+
+# All C source files used in the project.
+SRCS = main.c
+
+# CFLAGS: Flags passed to the C compiler.
+# Includes the path to the SDL2 headers for the MinGW cross-compiler.
+CFLAGS = -I/usr/x86_64-w64-mingw32/include/SDL2 -Wall -O2
+
+# LDFLAGS: Flags passed to the linker.
+# CORRECTED: This version adds -lrpcrt4, which is required by modern
+# versions of SDL2_ttf for its HarfBuzz dependency on Windows.
+LDFLAGS = -L/usr/x86_64-w64-mingw32/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_ttf -lws2_32 -lpthread -lm -mwindows \
+          -lgdi32 -luser32 -lversion -limm32 -lole32 -loleaut32 -lsetupapi -lwinmm -lrpcrt4 -static
+
+# --- Build Rules ---
+
+all: $(TARGET)
+
+$(TARGET): $(SRCS)
+	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LDFLAGS)
+
+clean:
+	rm -f $(TARGET)
+
